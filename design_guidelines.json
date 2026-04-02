@@ -1,0 +1,80 @@
+{
+  "identity": "E1 - The Anti-AI Designer",
+  "project_name": "Moonlight Realm Archive (月光之境档案馆)",
+  "theme": "light",
+  "archetype": "Archetype 5 (Jewel & Luxury) - Editorial/Literary Variant",
+  "design_principles": [
+    "Typography and Whitespace over Images: Use massive padding (p-16 to p-32) and readable line heights (leading-loose). Let the text breathe.",
+    "Literary Elegance: Mix traditional Chinese Serif for headings with clean modern Sans for body text to create tension and readability.",
+    "Color as Focus: 95% of the UI is monochrome (off-white paper and charcoal ink). The blue accent is used strictly for interactive states, key data points, and reading progress.",
+    "Smooth Momentum: Implement Lenis smooth scrolling to give the text reading experience a premium 'weight'."
+  ],
+  "colors": {
+    "background": "#FAFAFA",
+    "surface": "#FFFFFF",
+    "text_primary": "#1A1A1A",
+    "text_secondary": "#52525B",
+    "accent": "#2563EB",
+    "accent_light": "#DBEAFE",
+    "accent_muted": "#1E3A8A",
+    "border": "#E4E4E7",
+    "visual_effects": "Use a subtle CSS noise overlay (opacity 1.5%) across the entire background to remove digital flatness and simulate a paper/archival feel."
+  },
+  "typography": {
+    "heading_font": "font-serif (Noto Serif SC, Songti SC, STSong, serif)",
+    "body_font": "font-sans (Inter, Noto Sans SC, PingFang SC, sans-serif)",
+    "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-tight font-serif",
+    "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-serif",
+    "h3": "text-xl sm:text-2xl font-sans font-medium",
+    "body": "text-base sm:text-lg leading-relaxed sm:leading-loose text-text_secondary font-sans",
+    "overline": "text-xs tracking-[0.2em] uppercase text-accent font-sans font-semibold"
+  },
+  "spacing_and_layout": {
+    "page_wrapper": "px-6 md:px-12 lg:px-24 py-12 lg:py-24",
+    "reading_container": "max-w-prose mx-auto",
+    "sidebar_layout": "grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24",
+    "sidebar_span": "col-span-1 lg:col-span-3 lg:sticky lg:top-24 lg:h-fit",
+    "content_span": "col-span-1 lg:col-span-9"
+  },
+  "animations": {
+    "scroll": "Lenis smooth scroll is MANDATORY for the reading experience.",
+    "page_transition": "Framer Motion: fade in and slight slide up (y: 20 -> 0, duration: 0.8, ease: [0.16, 1, 0.3, 1]).",
+    "stagger": "List items (like characters or scenes) should stagger in with 0.05s delay.",
+    "hover": "Text color shifts to accent blue, subtle x-axis translation (translate-x-1) for links."
+  },
+  "pages": {
+    "content_page": {
+      "description": "Chronological reading stream. Single page scroll.",
+      "layout": "Asymmetrical split. Left sticky sidebar for search and character filtering. Main right column for stories.",
+      "scene_card": "No visible card bounds. Use massive vertical spacing (py-24) and an elegant top border (border-t border-border) to separate scenes. Include Title (H2, Serif), Date/Time, Abstract, Characters involved, and the dialogue stream.",
+      "dialogue": "Format like a theatrical script. Character name (Sans, Bold, slightly tinted) followed by their dialogue (Serif or Sans, relaxed line height, block indented)."
+    },
+    "data_page": {
+      "description": "Statistics and Visualizations.",
+      "layout": "Bento grid, Mode B (Control Room) but with generous internal padding (p-8).",
+      "force_graph": "Use react-force-graph-2d. Nodes are charcoal or blue based on group, links are very subtle (#E4E4E7). Background transparent.",
+      "heatmap": "GitHub style, but using shades of the accent blue (from bg-blue-50 to bg-blue-800). Rounded squares (rounded-sm). No borders.",
+      "big_numbers": "Huge serif numbers (text-6xl+) for total scenes, words, etc. Left-aligned."
+    },
+    "character_page": {
+      "description": "Game-like character selection and lore.",
+      "layout": "Left column: Interactive vertical list of characters (large typography, opacity 50% idle, 100% + blue accent on active). Right column: Sticky detail view showing lore, relationships, and stats.",
+      "details": "Use typography to differentiate metadata (uppercase overlines) from narrative text (serif body)."
+    }
+  },
+  "libraries_to_install": [
+    "framer-motion",
+    "lucide-react",
+    "react-force-graph-2d",
+    "@studio-freight/react-lenis",
+    "clsx",
+    "tailwind-merge",
+    "date-fns"
+  ],
+  "component_instructions": {
+    "general": "Do not use Shadcn 'Card' wrappers for the reading content. Use pure semantic HTML (article, section) with tailored Tailwind spacing to create an editorial feel. Use Shadcn for interactive UI (Dialogs, Selects) but heavily customize to remove the default heavy shadows.",
+    "search": "Minimalist input field. Bottom border only (border-b border-border), no background (bg-transparent), large text (text-xl). Focus state should just color the bottom border blue.",
+    "buttons": "Flat, text-based with an elegant underline hover effect, or solid with zero border-radius for a strict editorial feel."
+  },
+  "testing_attributes": "All interactive elements MUST include a 'data-testid' attribute (e.g., 'data-testid=\"search-input\"', 'data-testid=\"character-filter-btn\"')."
+}
