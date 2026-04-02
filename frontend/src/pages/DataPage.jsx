@@ -106,25 +106,25 @@ const DataPage = () => {
         </motion.div>
       </div>
 
+      {/* Force Graph - Full Width */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-white rounded-lg p-8 border border-[#E4E4E7] mb-8"
+        data-testid="force-graph-container"
+      >
+        <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">角色关系图</h2>
+        <p className="text-sm text-[#52525B] mb-6">
+          节点大小代表发言量，连线粗细代表共同出场次数。拖拽节点、滚轮缩放、点击聚焦。
+        </p>
+        <div className="relative">
+          <ForceGraph interactions={interactions} characters={characters} />
+        </div>
+      </motion.div>
+
       {/* Bento Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Force Graph */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-lg p-8 border border-[#E4E4E7]"
-          data-testid="force-graph-container"
-        >
-          <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">角色关系图</h2>
-          <p className="text-sm text-[#52525B] mb-6">
-            节点大小代表发言量，连线粗细代表共同出场次数。点击节点可聚焦。
-          </p>
-          <div className="relative">
-            <ForceGraph interactions={interactions} characters={characters} />
-          </div>
-        </motion.div>
-
         {/* Character Ranking */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

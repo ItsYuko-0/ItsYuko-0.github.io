@@ -2,8 +2,7 @@ import { useState, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCharacters, useScenes } from "../hooks/useData";
-import { ScrollArea } from "../components/ui/scroll-area";
-import { Loader2, MessageSquare, BookOpen, MapPin, Users, ArrowRight, ChevronLeft } from "lucide-react";
+import { Loader2, MessageSquare, BookOpen, MapPin, Users, ArrowRight } from "lucide-react";
 
 // Placeholder descriptions for characters
 const characterDescriptions = {
@@ -96,9 +95,12 @@ const CharacterPage = () => {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
-        {/* Character List - Left */}
+        {/* Character List - Left - Native scrollable */}
         <div className="col-span-1 lg:col-span-4">
-          <ScrollArea className="h-[70vh] pr-4">
+          <div 
+            className="h-[70vh] overflow-y-auto pr-4"
+            style={{ scrollbarWidth: 'thin', scrollbarColor: '#E4E4E7 transparent' }}
+          >
             <div className="space-y-1">
               {characterList.map((char, index) => (
                 <motion.button
@@ -146,7 +148,7 @@ const CharacterPage = () => {
                 </motion.button>
               ))}
             </div>
-          </ScrollArea>
+          </div>
         </div>
 
         {/* Character Details - Right */}

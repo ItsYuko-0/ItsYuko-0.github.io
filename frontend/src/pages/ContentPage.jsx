@@ -1,11 +1,11 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useScenes, useCharacters, useFuseSearch } from "../hooks/useData";
 import SearchBar from "../components/SearchBar";
 import CharacterSidebar from "../components/CharacterSidebar";
 import SceneCard from "../components/SceneCard";
-import { Loader2 } from "lucide-react";
+import { Loader2, BookOpen, MessageSquare } from "lucide-react";
 
 const INITIAL_LOAD = 20;
 const LOAD_MORE = 15;
@@ -22,6 +22,8 @@ const ContentPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [readingProgress, setReadingProgress] = useState(0);
   const [visibleCount, setVisibleCount] = useState(INITIAL_LOAD);
+  const [summaryMode, setSummaryMode] = useState(false);
+  const [expandedSceneId, setExpandedSceneId] = useState(null);
   
   const contentRef = useRef(null);
   const loadMoreRef = useRef(null);
@@ -74,18 +76,22 @@ const ContentPage = () => {
     handleScrollToScene(scene.id);
   }, [handleScrollToScene]);
 
-  // Reading progress
+  // Reading progress based on content scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (!contentRef.current) return;
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const contentArea = document.getElementById("content-scroll-area");
+      if (!contentArea) return;
+      const { scrollTop, scrollHeight, clientHeight } = contentArea;
       const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
-      setReadingProgress(Math.min(progress, 100));
+      setReadingProgress(Math.min(Math.max(progress, 0), 100));
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    const contentArea = document.getElementById("content-scroll-area");
+    if (contentArea) {
+      contentArea.addEventListener("scroll", handleScroll, { passive: true });
+      return () => contentArea.removeEventListener("scroll", handleScroll);
+    }
+  }, [scenesLoading]);
 
   // Get character's scene IDs for filtering
   const characterSceneIds = selectedCharacter
@@ -93,6 +99,11 @@ const ContentPage = () => {
     : [];
 
   const loading = scenesLoading || charsLoading;
+
+  // Toggle expanded scene in summary mode
+  const handleToggleExpand = (sceneId) => {
+    setExpandedSceneId(expandedSceneId === sceneId ? null : sceneId);
+  };
 
   if (loading) {
     return (
@@ -107,56 +118,96 @@ const ContentPage = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+      className="h-[calc(100vh-65px)] flex"
     >
-      {/* Reading Progress */}
-      <div
-        className="reading-progress"
-        style={{ width: `${readingProgress}%` }}
-        data-testid="reading-progress"
-      />
+      {/* Fixed Sidebar */}
+      <aside className="w-80 flex-shrink-0 border-r border-[#E4E4E7] bg-[#FAFAFA] p-6 overflow-y-auto">
+        <div className="space-y-8">
+          {/* Search */}
+          <SearchBar
+            onSearch={handleSearch}
+            onSelect={handleSearchSelect}
+            results={searchResults}
+          />
 
-      <div className="px-6 md:px-12 lg:px-24 py-12 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
-          {/* Sidebar */}
-          <aside className="col-span-1 lg:col-span-3">
-            <div className="space-y-8">
-              {/* Search */}
-              <SearchBar
-                onSearch={handleSearch}
-                onSelect={handleSearchSelect}
-                results={searchResults}
-              />
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-2 p-1 bg-[#F4F4F5] rounded-lg">
+            <button
+              onClick={() => setSummaryMode(false)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
+                !summaryMode
+                  ? "bg-white text-[#2563EB] shadow-sm"
+                  : "text-[#52525B] hover:text-[#1A1A1A]"
+              }`}
+              data-testid="mode-full"
+            >
+              <MessageSquare size={14} />
+              完整对话
+            </button>
+            <button
+              onClick={() => setSummaryMode(true)}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-md text-sm font-medium transition-all ${
+                summaryMode
+                  ? "bg-white text-[#2563EB] shadow-sm"
+                  : "text-[#52525B] hover:text-[#1A1A1A]"
+              }`}
+              data-testid="mode-summary"
+            >
+              <BookOpen size={14} />
+              仅摘要
+            </button>
+          </div>
 
-              {/* Character Filter */}
-              <CharacterSidebar
-                characters={characterList}
-                scenes={scenes}
-                selectedCharacter={selectedCharacter}
-                onSelectCharacter={setSelectedCharacter}
-                onScrollToScene={handleScrollToScene}
-              />
-            </div>
-          </aside>
+          {/* Character Filter */}
+          <CharacterSidebar
+            characters={characterList}
+            scenes={scenes}
+            selectedCharacter={selectedCharacter}
+            onSelectCharacter={setSelectedCharacter}
+            onScrollToScene={handleScrollToScene}
+          />
+        </div>
+      </aside>
 
-          {/* Main Content */}
-          <main ref={contentRef} className="col-span-1 lg:col-span-9">
+      {/* Main Content with Scroll */}
+      <div className="flex-1 flex flex-col relative">
+        {/* Vertical Progress Bar */}
+        <div className="absolute right-0 top-0 bottom-0 w-1 bg-[#E4E4E7] z-10">
+          <div
+            className="w-full bg-[#2563EB] transition-all duration-150"
+            style={{ height: `${readingProgress}%` }}
+            data-testid="reading-progress-bar"
+          />
+        </div>
+
+        {/* Scrollable Content Area */}
+        <div 
+          id="content-scroll-area"
+          className="flex-1 overflow-y-auto px-8 md:px-12 lg:px-16 py-12"
+        >
+          <main ref={contentRef} className="max-w-3xl">
             {/* Header */}
             <header className="mb-16">
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-[#1A1A1A] tracking-tight leading-tight">
                 故事正文
               </h1>
-              <p className="text-[#52525B] mt-4 text-lg leading-relaxed max-w-2xl">
+              <p className="text-[#52525B] mt-4 text-lg leading-relaxed">
                 月光之境的全部故事，按时间顺序排列。共 {scenes.length} 个场景。
                 {selectedCharacter && (
                   <span className="text-[#2563EB]">
                     {" "}当前筛选：{selectedCharacter}
                   </span>
                 )}
+                {summaryMode && (
+                  <span className="text-[#A1A1AA]">
+                    {" "}· 摘要模式（点击展开对话）
+                  </span>
+                )}
               </p>
             </header>
 
             {/* Scenes */}
-            <div className="max-w-prose">
+            <div>
               {scenes.slice(0, visibleCount).map((scene, index) => (
                 <SceneCard
                   key={scene.id}
@@ -166,6 +217,9 @@ const ContentPage = () => {
                     selectedCharacter && !characterSceneIds.includes(scene.id)
                   }
                   highlightCharacter={selectedCharacter}
+                  summaryMode={summaryMode}
+                  isExpanded={expandedSceneId === scene.id}
+                  onToggleExpand={() => handleToggleExpand(scene.id)}
                 />
               ))}
               
@@ -182,6 +236,13 @@ const ContentPage = () => {
               )}
             </div>
           </main>
+        </div>
+
+        {/* Progress Indicator at Bottom */}
+        <div className="h-10 border-t border-[#E4E4E7] bg-white flex items-center px-6 text-sm text-[#52525B]">
+          <span>阅读进度：{Math.round(readingProgress)}%</span>
+          <span className="mx-4">·</span>
+          <span>已加载 {visibleCount} / {scenes.length} 场景</span>
         </div>
       </div>
     </motion.div>
