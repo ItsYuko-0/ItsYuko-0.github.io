@@ -1,6 +1,7 @@
 import { memo, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Clock, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { getCharacterColor } from "../utils/characterColors";
 
 const SceneCard = memo(({ 
   scene, 
@@ -80,17 +81,20 @@ const SceneCard = memo(({
           {scene.summary}
         </p>
 
-        {/* Characters */}
+        {/* Characters - with colors */}
         <div className="flex items-center gap-2 mt-4 flex-wrap">
           <Users size={14} className="text-[#A1A1AA]" />
           {scene.characters.map((char) => (
             <span
               key={char}
-              className={`text-sm px-2 py-0.5 rounded ${
-                char === highlightCharacter
-                  ? "bg-[#DBEAFE] text-[#2563EB] font-medium"
-                  : "text-[#52525B]"
+              className={`text-sm px-2 py-0.5 rounded font-medium ${
+                char === highlightCharacter ? "ring-2 ring-offset-1" : ""
               }`}
+              style={{ 
+                color: getCharacterColor(char),
+                backgroundColor: char === highlightCharacter ? `${getCharacterColor(char)}15` : 'transparent',
+                ringColor: char === highlightCharacter ? getCharacterColor(char) : undefined
+              }}
             >
               {char}
             </span>
@@ -123,17 +127,14 @@ const SceneCard = memo(({
                   </div>
                 )}
 
-                {/* Messages */}
+                {/* Messages - with colored character names */}
                 <div className="space-y-3">
                   {group.messages.map((msg) => (
                     <div key={msg.id} className="group">
                       <div className="flex items-start gap-2">
                         <span
-                          className={`dialogue-character font-sans font-medium text-sm shrink-0 ${
-                            msg.character === highlightCharacter
-                              ? "text-[#2563EB]"
-                              : "text-[#52525B]"
-                          }`}
+                          className="dialogue-character font-sans font-semibold text-sm shrink-0"
+                          style={{ color: getCharacterColor(msg.character) }}
                         >
                           {msg.character}
                         </span>
