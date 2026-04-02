@@ -121,7 +121,10 @@ const ContentPage = () => {
       className="h-[calc(100vh-65px)] flex"
     >
       {/* Fixed Sidebar */}
-      <aside className="w-80 flex-shrink-0 border-r border-[#E4E4E7] bg-[#FAFAFA] p-6 overflow-y-auto">
+      <aside 
+        className="w-80 flex-shrink-0 border-r border-[#E4E4E7] bg-[#FAFAFA] p-6 overflow-y-auto"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#E4E4E7 transparent' }}
+      >
         <div className="space-y-8">
           {/* Search */}
           <SearchBar
@@ -184,6 +187,7 @@ const ContentPage = () => {
         <div 
           id="content-scroll-area"
           className="flex-1 overflow-y-auto px-8 md:px-12 lg:px-16 py-12"
+          style={{ scrollbarWidth: 'thin', scrollbarColor: '#E4E4E7 transparent' }}
         >
           <main ref={contentRef} className="max-w-3xl">
             {/* Header */}

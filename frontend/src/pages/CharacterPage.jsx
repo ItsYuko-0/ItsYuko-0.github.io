@@ -82,23 +82,23 @@ const CharacterPage = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="px-6 md:px-12 lg:px-24 py-12 lg:py-24"
+      className="px-6 md:px-12 lg:px-24 py-8 lg:py-12"
     >
       {/* Header */}
-      <header className="mb-16">
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-[#1A1A1A] tracking-tight leading-tight">
+      <header className="mb-8">
+        <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#1A1A1A] tracking-tight leading-tight">
           角色档案
         </h1>
-        <p className="text-[#52525B] mt-4 text-lg leading-relaxed max-w-2xl">
+        <p className="text-[#52525B] mt-3 text-base leading-relaxed max-w-2xl">
           月光之境中的所有角色。点击查看详细信息与故事线。
         </p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
         {/* Character List - Left - Native scrollable */}
         <div className="col-span-1 lg:col-span-4">
           <div 
-            className="h-[70vh] overflow-y-auto pr-4"
+            className="h-[calc(100vh-220px)] overflow-y-auto pr-4"
             style={{ scrollbarWidth: 'thin', scrollbarColor: '#E4E4E7 transparent' }}
           >
             <div className="space-y-1">

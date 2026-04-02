@@ -106,38 +106,38 @@ const DataPage = () => {
         </motion.div>
       </div>
 
-      {/* Force Graph - Full Width */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-white rounded-lg p-8 border border-[#E4E4E7] mb-8"
-        data-testid="force-graph-container"
-      >
-        <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">角色关系图</h2>
-        <p className="text-sm text-[#52525B] mb-6">
-          节点大小代表发言量，连线粗细代表共同出场次数。拖拽节点、滚轮缩放、点击聚焦。
-        </p>
-        <div className="relative">
-          <ForceGraph interactions={interactions} characters={characters} />
-        </div>
-      </motion.div>
-
       {/* Bento Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Character Ranking */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Force Graph - Takes 2 columns */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="lg:col-span-2 bg-white rounded-lg p-8 border border-[#E4E4E7]"
+          data-testid="force-graph-container"
+        >
+          <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">角色关系图</h2>
+          <p className="text-sm text-[#52525B] mb-6">
+            节点大小代表发言量，连线粗细代表共同出场次数。拖拽节点、滚轮缩放、点击聚焦。
+          </p>
+          <div className="relative">
+            <ForceGraph interactions={interactions} characters={characters} />
+          </div>
+        </motion.div>
+
+        {/* Character Ranking - 1 column, narrower */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="bg-white rounded-lg p-8 border border-[#E4E4E7]"
+          className="bg-white rounded-lg p-6 border border-[#E4E4E7]"
           data-testid="character-ranking"
         >
-          <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">角色发言量排行</h2>
-          <p className="text-sm text-[#52525B] mb-6">
-            按消息数量排序的前 15 位角色。
+          <h2 className="font-serif text-xl text-[#1A1A1A] mb-2">角色发言量排行</h2>
+          <p className="text-sm text-[#52525B] mb-4">
+            前 15 位角色
           </p>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {characterList.slice(0, 15).map((char, index) => {
               const maxCount = characterList[0]?.message_count || 1;
               const percentage = (char.message_count / maxCount) * 100;
@@ -151,14 +151,14 @@ const DataPage = () => {
                   className="group"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium text-sm text-[#1A1A1A] truncate max-w-[200px] group-hover:text-[#2563EB] transition-colors">
+                    <span className="font-medium text-xs text-[#1A1A1A] truncate max-w-[140px] group-hover:text-[#2563EB] transition-colors">
                       {index + 1}. {char.name}
                     </span>
-                    <span className="text-sm text-[#52525B]">
+                    <span className="text-xs text-[#52525B]">
                       {char.message_count.toLocaleString()}
                     </span>
                   </div>
-                  <div className="h-2 bg-[#F4F4F5] rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-[#F4F4F5] rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${percentage}%` }}
@@ -177,7 +177,7 @@ const DataPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="lg:col-span-2 bg-white rounded-lg p-8 border border-[#E4E4E7]"
+          className="lg:col-span-3 bg-white rounded-lg p-8 border border-[#E4E4E7]"
           data-testid="heatmap-container"
         >
           <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">活跃度时间线</h2>

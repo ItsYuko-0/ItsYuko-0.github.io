@@ -75,6 +75,21 @@ html.lenis, html.lenis body {
     background: #A1A1AA;
 }
 
+/* Ensure all scrollable areas respond to mouse wheel on hover */
+[style*="overflow"], 
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-auto {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Firefox scrollbar styling */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #E4E4E7 transparent;
+}
+
 /* Text selection */
 ::selection {
     background-color: #DBEAFE;
