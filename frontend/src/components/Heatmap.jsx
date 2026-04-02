@@ -72,15 +72,15 @@ const Heatmap = ({ timeline }) => {
     return { weeks, maxMessages, months };
   }, [timeline]);
 
-  // Get color intensity
+  // Get color intensity - blue theme
   const getColor = (messages) => {
     if (messages === 0) return "bg-[#EBEDF0]";
     const ratio = messages / maxMessages;
-    if (ratio < 0.2) return "bg-[#9BE9A8]";
-    if (ratio < 0.4) return "bg-[#40C463]";
-    if (ratio < 0.6) return "bg-[#30A14E]";
-    if (ratio < 0.8) return "bg-[#216E39]";
-    return "bg-[#0E4429]";
+    if (ratio < 0.2) return "bg-[#DBEAFE]";
+    if (ratio < 0.4) return "bg-[#93C5FD]";
+    if (ratio < 0.6) return "bg-[#3B82F6]";
+    if (ratio < 0.8) return "bg-[#1D4ED8]";
+    return "bg-[#1E3A8A]";
   };
 
   const dayLabels = ["日", "一", "二", "三", "四", "五", "六"];
@@ -180,10 +180,10 @@ const Heatmap = ({ timeline }) => {
         <span>少</span>
         <div className="flex gap-[2px]">
           <div className="w-[11px] h-[11px] rounded-sm bg-[#EBEDF0]" />
-          <div className="w-[11px] h-[11px] rounded-sm bg-[#9BE9A8]" />
-          <div className="w-[11px] h-[11px] rounded-sm bg-[#40C463]" />
-          <div className="w-[11px] h-[11px] rounded-sm bg-[#30A14E]" />
-          <div className="w-[11px] h-[11px] rounded-sm bg-[#0E4429]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#DBEAFE]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#93C5FD]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#3B82F6]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#1E3A8A]" />
         </div>
         <span>多</span>
       </div>
