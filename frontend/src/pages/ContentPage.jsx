@@ -63,13 +63,28 @@ const ContentPage = () => {
     [search]
   );
 
-  // Scroll to scene
+  // Scroll to scene - load more if needed first
   const handleScrollToScene = useCallback((sceneId) => {
+    // Check if the scene is already loaded
     const element = document.getElementById(`scene-${sceneId}`);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      // Scene not loaded yet - load all scenes up to this one
+      const sceneIndex = scenes.findIndex(s => s.id === sceneId);
+      if (sceneIndex >= 0) {
+        // Load enough scenes to include this one
+        setVisibleCount(Math.max(visibleCount, sceneIndex + 5));
+        // Wait for render then scroll
+        setTimeout(() => {
+          const el = document.getElementById(`scene-${sceneId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 100);
+      }
     }
-  }, []);
+  }, [scenes, visibleCount]);
 
   // Handle search result selection
   const handleSearchSelect = useCallback((scene) => {

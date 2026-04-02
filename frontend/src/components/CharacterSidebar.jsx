@@ -17,9 +17,9 @@ const CharacterSidebar = ({
     return scenes.filter((scene) => char.scene_ids.includes(scene.id));
   }, [selectedCharacter, characters, scenes]);
 
-  // Top 20 characters by message count
-  const topCharacters = useMemo(() => {
-    return characters.slice(0, 20);
+  // All characters by message count
+  const allCharacters = useMemo(() => {
+    return characters;
   }, [characters]);
 
   return (
@@ -47,7 +47,7 @@ const CharacterSidebar = ({
         style={{ scrollbarWidth: 'thin', scrollbarColor: '#E4E4E7 transparent' }}
       >
         <div className="space-y-1">
-          {topCharacters.map((char, index) => (
+          {allCharacters.map((char, index) => (
             <motion.button
               key={char.name}
               initial={{ opacity: 0, x: -10 }}
@@ -85,19 +85,19 @@ const CharacterSidebar = ({
             className="border-t border-[#E4E4E7] pt-6"
           >
             <h4 className="text-xs tracking-[0.2em] uppercase text-[#52525B] font-semibold mb-4">
-              {selectedCharacter} 的故事线
+              {selectedCharacter} 的故事线 ({characterScenes.length})
             </h4>
             <div 
-              className="h-[200px] overflow-y-auto pr-2"
+              className="h-[250px] overflow-y-auto pr-2"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#E4E4E7 transparent' }}
             >
               <div className="timeline-path">
-                {characterScenes.slice(0, 30).map((scene, index) => (
+                {characterScenes.map((scene, index) => (
                   <motion.button
                     key={scene.id}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: index * 0.03 }}
+                    transition={{ delay: Math.min(index * 0.01, 0.3) }}
                     onClick={() => onScrollToScene(scene.id)}
                     className="timeline-node w-full text-left hover:text-[#2563EB] transition-colors"
                     data-testid={`timeline-scene-${scene.id}`}
@@ -110,11 +110,6 @@ const CharacterSidebar = ({
                     </div>
                   </motion.button>
                 ))}
-                {characterScenes.length > 30 && (
-                  <div className="pl-6 text-xs text-[#A1A1AA] mt-2">
-                    还有 {characterScenes.length - 30} 个场景...
-                  </div>
-                )}
               </div>
             </div>
           </motion.div>
