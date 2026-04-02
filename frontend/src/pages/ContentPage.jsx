@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useScenes, useCharacters, useFuseSearch } from "../hooks/useData";
 import SearchBar from "../components/SearchBar";
@@ -6,16 +7,50 @@ import CharacterSidebar from "../components/CharacterSidebar";
 import SceneCard from "../components/SceneCard";
 import { Loader2 } from "lucide-react";
 
+const INITIAL_LOAD = 20;
+const LOAD_MORE = 15;
+
 const ContentPage = () => {
+  const [searchParams] = useSearchParams();
   const { scenes, loading: scenesLoading } = useScenes();
   const { characterList, loading: charsLoading } = useCharacters();
   const { search } = useFuseSearch(scenes);
   
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  // Initialize selected character from URL params
+  const initialCharacter = searchParams.get("character");
+  const [selectedCharacter, setSelectedCharacter] = useState(initialCharacter);
   const [searchResults, setSearchResults] = useState([]);
   const [readingProgress, setReadingProgress] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_LOAD);
   
   const contentRef = useRef(null);
+  const loadMoreRef = useRef(null);
+
+  // Update from URL params
+  useEffect(() => {
+    const charFromUrl = searchParams.get("character");
+    if (charFromUrl) {
+      setSelectedCharacter(decodeURIComponent(charFromUrl));
+    }
+  }, [searchParams]);
+
+  // Infinite scroll - load more scenes
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < scenes.length) {
+          setVisibleCount((prev) => Math.min(prev + LOAD_MORE, scenes.length));
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [visibleCount, scenes.length]);
 
   // Handle search
   const handleSearch = useCallback(
@@ -122,7 +157,7 @@ const ContentPage = () => {
 
             {/* Scenes */}
             <div className="max-w-prose">
-              {scenes.map((scene, index) => (
+              {scenes.slice(0, visibleCount).map((scene, index) => (
                 <SceneCard
                   key={scene.id}
                   scene={scene}
@@ -133,6 +168,18 @@ const ContentPage = () => {
                   highlightCharacter={selectedCharacter}
                 />
               ))}
+              
+              {/* Load more trigger */}
+              {visibleCount < scenes.length && (
+                <div 
+                  ref={loadMoreRef} 
+                  className="py-16 text-center text-[#A1A1AA]"
+                  data-testid="load-more-trigger"
+                >
+                  <Loader2 className="animate-spin mx-auto mb-2" size={24} />
+                  加载更多... ({visibleCount}/{scenes.length})
+                </div>
+              )}
             </div>
           </main>
         </div>
