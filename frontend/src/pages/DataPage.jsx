@@ -187,19 +187,19 @@ const DataPage = () => {
           <Heatmap timeline={timeline} />
         </motion.div>
 
-        {/* Top Locations */}
+        {/* Top Locations - spans 2 columns */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
-          className="bg-white rounded-lg p-8 border border-[#E4E4E7]"
+          className="lg:col-span-2 bg-white rounded-lg p-6 border border-[#E4E4E7]"
           data-testid="top-locations"
         >
-          <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">热门地点</h2>
-          <p className="text-sm text-[#52525B] mb-6">
+          <h2 className="font-serif text-xl text-[#1A1A1A] mb-2">热门地点</h2>
+          <p className="text-sm text-[#52525B] mb-4">
             出现频率最高的场景地点。
           </p>
-          <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-2">
             {(() => {
               // Aggregate locations from all characters
               const locationCounts = {};
@@ -220,9 +220,9 @@ const DataPage = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 + index * 0.02 }}
-                    className="flex items-center justify-between py-2 border-b border-[#F4F4F5] last:border-0"
+                    className="flex items-center justify-between py-2 border-b border-[#F4F4F5]"
                   >
-                    <span className="text-[#1A1A1A] text-sm truncate max-w-[200px]">
+                    <span className="text-[#1A1A1A] text-sm truncate max-w-[180px]">
                       {location}
                     </span>
                     <span className="text-[#2563EB] text-sm font-medium">
@@ -234,16 +234,16 @@ const DataPage = () => {
           </div>
         </motion.div>
 
-        {/* Date Range Info */}
+        {/* Date Range Info - spans 1 column */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-white rounded-lg p-8 border border-[#E4E4E7]"
+          className="bg-white rounded-lg p-6 border border-[#E4E4E7]"
           data-testid="date-range"
         >
-          <h2 className="font-serif text-2xl text-[#1A1A1A] mb-2">时间跨度</h2>
-          <p className="text-sm text-[#52525B] mb-6">
+          <h2 className="font-serif text-xl text-[#1A1A1A] mb-2">时间跨度</h2>
+          <p className="text-sm text-[#52525B] mb-4">
             故事发生的时间范围。
           </p>
           <div className="space-y-4">
@@ -251,7 +251,7 @@ const DataPage = () => {
               <div className="text-xs tracking-[0.2em] uppercase text-[#A1A1AA] mb-1">
                 开始日期
               </div>
-              <div className="font-serif text-2xl text-[#1A1A1A]">
+              <div className="font-serif text-xl text-[#1A1A1A]">
                 {stats.dateRange.start}
               </div>
             </div>
@@ -259,7 +259,7 @@ const DataPage = () => {
               <div className="text-xs tracking-[0.2em] uppercase text-[#A1A1AA] mb-1">
                 结束日期
               </div>
-              <div className="font-serif text-2xl text-[#1A1A1A]">
+              <div className="font-serif text-xl text-[#1A1A1A]">
                 {stats.dateRange.end}
               </div>
             </div>
@@ -267,7 +267,7 @@ const DataPage = () => {
               <div className="text-xs tracking-[0.2em] uppercase text-[#A1A1AA] mb-1">
                 平均每日消息
               </div>
-              <div className="font-serif text-2xl text-[#2563EB]">
+              <div className="font-serif text-xl text-[#2563EB]">
                 {Math.round(stats.totalMessages / stats.activeDays)}
               </div>
             </div>
