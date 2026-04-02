@@ -34,12 +34,14 @@ const Heatmap = ({ timeline }) => {
       const dateStr = currentDate.toISOString().split("T")[0];
       const messages = dateMap.get(dateStr) || 0;
       const month = currentDate.getMonth();
+      const year = currentDate.getFullYear();
       
       // Track months for labels
       if (month !== lastMonth && currentWeek.length === 0) {
         months.push({ 
           week: weekIndex, 
-          name: currentDate.toLocaleDateString("zh-CN", { month: "short" }) 
+          name: currentDate.toLocaleDateString("zh-CN", { month: "short" }),
+          year: year
         });
         lastMonth = month;
       }
@@ -72,13 +74,13 @@ const Heatmap = ({ timeline }) => {
 
   // Get color intensity
   const getColor = (messages) => {
-    if (messages === 0) return "bg-[#F4F4F5]";
+    if (messages === 0) return "bg-[#EBEDF0]";
     const ratio = messages / maxMessages;
-    if (ratio < 0.2) return "bg-blue-100";
-    if (ratio < 0.4) return "bg-blue-200";
-    if (ratio < 0.6) return "bg-blue-400";
-    if (ratio < 0.8) return "bg-blue-500";
-    return "bg-blue-700";
+    if (ratio < 0.2) return "bg-[#9BE9A8]";
+    if (ratio < 0.4) return "bg-[#40C463]";
+    if (ratio < 0.6) return "bg-[#30A14E]";
+    if (ratio < 0.8) return "bg-[#216E39]";
+    return "bg-[#0E4429]";
   };
 
   const dayLabels = ["日", "一", "二", "三", "四", "五", "六"];
@@ -89,76 +91,100 @@ const Heatmap = ({ timeline }) => {
 
   return (
     <div className="relative" data-testid="heatmap">
-      {/* Month labels */}
-      <div className="flex gap-[3px] mb-2 ml-6">
-        {months.map((m, i) => (
-          <div
-            key={i}
-            className="text-xs text-[#A1A1AA]"
-            style={{ 
-              position: "absolute",
-              left: `${m.week * 13 + 24}px`
-            }}
-          >
-            {m.name}
+      {/* Scrollable container */}
+      <div 
+        className="overflow-x-auto pb-4"
+        style={{ scrollbarWidth: 'thin', scrollbarColor: '#E4E4E7 transparent' }}
+      >
+        <div className="inline-block min-w-max">
+          {/* Month labels row */}
+          <div className="flex ml-8 mb-1">
+            {weeks.map((week, weekIndex) => {
+              const monthInfo = months.find(m => m.week === weekIndex);
+              return (
+                <div 
+                  key={weekIndex} 
+                  className="w-[13px] text-xs text-[#A1A1AA] shrink-0"
+                >
+                  {monthInfo ? monthInfo.name : ''}
+                </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
 
-      <div className="flex gap-1 mt-6">
-        {/* Day labels */}
-        <div className="flex flex-col gap-[3px] mr-1">
-          {dayLabels.map((day, i) => (
-            <div
-              key={day}
-              className="text-[10px] text-[#A1A1AA] h-[10px] leading-[10px]"
-              style={{ visibility: i % 2 === 0 ? "hidden" : "visible" }}
-            >
-              {day}
-            </div>
-          ))}
-        </div>
-
-        {/* Grid */}
-        <div className="flex gap-[3px] overflow-x-auto pb-2">
-          {weeks.map((week, weekIndex) => (
-            <div key={weekIndex} className="flex flex-col gap-[3px]">
-              {week.map((day, dayIndex) => (
-                <motion.div
-                  key={day.date}
-                  className={`heatmap-cell w-[10px] h-[10px] rounded-sm cursor-pointer ${getColor(
-                    day.messages
-                  )}`}
-                  onMouseEnter={() => setHoveredCell(day)}
-                  onMouseLeave={() => setHoveredCell(null)}
-                  whileHover={{ scale: 1.3 }}
-                  data-testid={`heatmap-cell-${day.date}`}
-                />
+          {/* Grid with day labels */}
+          <div className="flex">
+            {/* Day labels */}
+            <div className="flex flex-col gap-[3px] mr-2 shrink-0">
+              {dayLabels.map((day, i) => (
+                <div
+                  key={day}
+                  className="text-[10px] text-[#A1A1AA] h-[11px] leading-[11px] w-6 text-right pr-1"
+                  style={{ visibility: i % 2 === 1 ? "visible" : "hidden" }}
+                >
+                  {day}
+                </div>
               ))}
             </div>
-          ))}
+
+            {/* Weeks grid */}
+            <div className="flex gap-[3px]">
+              {weeks.map((week, weekIndex) => (
+                <div key={weekIndex} className="flex flex-col gap-[3px]">
+                  {[0, 1, 2, 3, 4, 5, 6].map((dayOfWeek) => {
+                    const day = week.find(d => d.dayOfWeek === dayOfWeek);
+                    if (!day) {
+                      return (
+                        <div 
+                          key={dayOfWeek} 
+                          className="w-[11px] h-[11px]" 
+                        />
+                      );
+                    }
+                    return (
+                      <motion.div
+                        key={day.date}
+                        className={`w-[11px] h-[11px] rounded-sm cursor-pointer ${getColor(day.messages)}`}
+                        onMouseEnter={() => setHoveredCell(day)}
+                        onMouseLeave={() => setHoveredCell(null)}
+                        whileHover={{ scale: 1.2 }}
+                        data-testid={`heatmap-cell-${day.date}`}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Tooltip */}
       {hoveredCell && (
         <motion.div
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute -top-10 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white px-3 py-2 rounded text-xs whitespace-nowrap z-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed bg-[#1A1A1A] text-white px-3 py-2 rounded text-xs whitespace-nowrap z-50 pointer-events-none"
+          style={{
+            left: '50%',
+            bottom: '20px',
+            transform: 'translateX(-50%)'
+          }}
         >
           {hoveredCell.date}: {hoveredCell.messages} 条消息
         </motion.div>
       )}
 
       {/* Legend */}
-      <div className="flex items-center justify-end gap-1 mt-4 text-xs text-[#A1A1AA]">
+      <div className="flex items-center justify-end gap-2 mt-4 text-xs text-[#A1A1AA]">
         <span>少</span>
-        <div className="w-[10px] h-[10px] rounded-sm bg-[#F4F4F5]" />
-        <div className="w-[10px] h-[10px] rounded-sm bg-blue-100" />
-        <div className="w-[10px] h-[10px] rounded-sm bg-blue-200" />
-        <div className="w-[10px] h-[10px] rounded-sm bg-blue-400" />
-        <div className="w-[10px] h-[10px] rounded-sm bg-blue-700" />
+        <div className="flex gap-[2px]">
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#EBEDF0]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#9BE9A8]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#40C463]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#30A14E]" />
+          <div className="w-[11px] h-[11px] rounded-sm bg-[#0E4429]" />
+        </div>
         <span>多</span>
       </div>
     </div>
