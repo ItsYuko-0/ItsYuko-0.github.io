@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			serif: ['Noto Serif SC', 'Songti SC', 'STSong', 'serif'],
+  			sans: ['Inter', 'Noto Sans SC', 'PingFang SC', 'sans-serif'],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
