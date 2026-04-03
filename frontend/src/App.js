@@ -6,6 +6,7 @@ import Navigation from "./components/Navigation";
 import ContentPage from "./pages/ContentPage";
 import DataPage from "./pages/DataPage";
 import CharacterPage from "./pages/CharacterPage";
+import OtherPage from "./pages/OtherPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/data" element={<DataPage />} />
             <Route path="/characters" element={<CharacterPage />} />
             <Route path="/characters/:characterName" element={<CharacterPage />} />
+            <Route path="/other" element={<OtherPage />} />
           </Routes>
         </AnimatePresence>
       </div>

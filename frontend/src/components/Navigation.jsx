@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { BookOpen, BarChart3, Users } from "lucide-react";
+import { BookOpen, BarChart3, Users, MoreHorizontal } from "lucide-react";
 
 const Navigation = () => {
   const location = useLocation();
@@ -9,6 +9,7 @@ const Navigation = () => {
     { path: "/", label: "正文", icon: BookOpen },
     { path: "/data", label: "数据", icon: BarChart3 },
     { path: "/characters", label: "角色", icon: Users },
+    { path: "/other", label: "其他", icon: MoreHorizontal },
   ];
 
   return (
